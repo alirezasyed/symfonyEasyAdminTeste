@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductsRepository;
 use Doctrine\ORM\Mapping as ORM;
-
+use App\Repository\ProductsRepository;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * @ORM\Entity(repositoryClass=ProductsRepository::class)
+ * @Vich\Uploadable
  */
 class Products
 {
@@ -21,6 +24,12 @@ class Products
      * @ORM\Column(type="string", length=255)
      */
     private $name;
+
+    /**
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(length=255, unique=true)
+     */
+    private $slug;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -63,10 +72,65 @@ class Products
      */
     private $category;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @var string
+     */
+    private $image;
+
+
+    /**
+     * @Vich\UploadableField(mapping="featured_images", fileNameProperty="image")
+     * @var File
+     */
+    private $imageFile;
+
+    /**
+     * @var \DateTime $created_at
+     * 
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $created_at;
+
+    /**
+     * @var \DateTime $updated_at
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $updated_at;
+
+
+    // public function __construct()
+    // {
+    //     $this->created_at = new \DateTime();
+    //     $this->updated_at = new \DateTime();
+    // }
+
+    public function setImageFile(File $image = null)
+    {
+    $this->imageFile = $image;
+
+    if ($image) {
+        $this->updated_at = new \DateTime('now');
+    }
+
+    }
+
+    public function getImageFile()
+    {
+
+    return $this->imageFile;
+
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;
     }
+
 
     public function getName(): ?string
     {
@@ -175,4 +239,40 @@ class Products
 
         return $this;
     }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+
+    /**
+     * Get the value of created_at
+     */ 
+    public function getCreated_at()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * Get the value of updated_at
+     */ 
+    public function getUpdated_at()
+    {
+        return $this->updated_at;
+    }
+
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
 }
