@@ -80,7 +80,7 @@ class Products
 
 
     /**
-     * @Vich\UploadableField(mapping="featured_images", fileNameProperty="image")
+     * @Vich\UploadableField(mapping="product_images", fileNameProperty="image")
      * @var File
      */
     private $imageFile;
@@ -101,6 +101,12 @@ class Products
      */
     private $updated_at;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Users::class, inversedBy="products")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
 
     // public function __construct()
     // {
@@ -113,7 +119,7 @@ class Products
     $this->imageFile = $image;
 
     if ($image) {
-        $this->updated_at = new \DateTime('now');
+        $this->created_at = new \DateTime('now');
     }
 
     }
@@ -240,12 +246,12 @@ class Products
         return $this;
     }
 
-    public function getImage(): ?string
+    public function getImage()
     {
         return $this->image;
     }
 
-    public function setImage(string $image): self
+    public function setImage($image)
     {
         $this->image = $image;
 
@@ -273,6 +279,18 @@ class Products
     public function getSlug(): ?string
     {
         return $this->slug;
+    }
+
+    public function getUser(): ?Users
+    {
+        return $this->user;
+    }
+
+    public function setUser(?Users $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
 }
