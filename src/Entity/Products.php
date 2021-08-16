@@ -30,6 +30,7 @@ class Products
      * @ORM\Column(length=255, unique=true)
      */
     private $slug;
+ 
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -95,8 +96,8 @@ class Products
 
     /**
      * @var \DateTime $updated_at
-     *
-     * @Gedmo\Timestampable(on="update")
+     * 
+     * @Gedmo\Timestampable(on="update") 
      * @ORM\Column(type="datetime_immutable", nullable=true)
      */
     private $updated_at;
@@ -110,21 +111,27 @@ class Products
 
     // public function __construct()
     // {
-    //     $this->created_at = new \DateTime();
-    //     $this->updated_at = new \DateTime();
+    //     $this->created_at = new \DateTimeImmutable();
+    //     $this->updated_at = new \DateTimeImmutable();
     // }
 
-    public function setImageFile(File $image = null)
+    public function setImageFile(?File $image = null): void
     {
     $this->imageFile = $image;
 
-    if ($image) {
-        $this->created_at = new \DateTime('now');
+    if (null !== $image) {
+        // It is required that at least one field changes if you are using doctrine
+        // otherwise the event listeners won't be called and the file is lost
+        $this->updated_at = new \DateTimeImmutable();
     }
+
+    // if ($image) {
+    //     $this->created_at = new \DateTime('now');
+    // }
 
     }
 
-    public function getImageFile()
+    public function getImageFile(): ?File
     {
 
     return $this->imageFile;
@@ -246,12 +253,12 @@ class Products
         return $this;
     }
 
-    public function getImage()
+    public function getImage(): ?string
     {
         return $this->image;
     }
 
-    public function setImage($image)
+    public function setImage(?string $image)
     {
         $this->image = $image;
 
@@ -262,7 +269,7 @@ class Products
     /**
      * Get the value of created_at
      */ 
-    public function getCreated_at()
+    public function getCreated_at(): ?\DateTimeInterface
     {
         return $this->created_at;
     }
@@ -270,16 +277,13 @@ class Products
     /**
      * Get the value of updated_at
      */ 
-    public function getUpdated_at()
+    public function getUpdated_at(): ?\DateTimeInterface
     {
         return $this->updated_at;
     }
 
 
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
+ 
 
     public function getUser(): ?Users
     {
@@ -293,4 +297,51 @@ class Products
         return $this;
     }
 
+  
+
+
+    /**
+     * Set the value of created_at
+     *
+     * @return  self
+     */ 
+    public function setCreated_at($created_at)
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of updated_at
+     *
+     * @return  self
+     */ 
+    public function setUpdated_at($updated_at)
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+
+    /**
+     * Get the value of slug
+     */ 
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * Set the value of slug
+     *
+     * @return  self
+     */ 
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
 }
